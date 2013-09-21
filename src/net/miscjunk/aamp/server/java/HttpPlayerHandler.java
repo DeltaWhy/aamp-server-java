@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.miscjunk.aamp.common.Player;
 import net.miscjunk.aamp.common.Playlist;
+import net.miscjunk.aamp.common.Query;
 import net.miscjunk.aamp.common.Song;
 import net.miscjunk.aamp.common.SongSerializer;
 
@@ -101,6 +102,19 @@ public class HttpPlayerHandler extends AbstractHandler {
                     	response.getWriter().println("SET:" + action);
                     }else {response.getWriter().println("FAILED: SET:" + action);}
                     response.setStatus(HttpServletResponse.SC_OK);
+                }
+                break;
+            case "query":
+                if (path.length < 3 || path[2].equals("")) {
+                    InputStreamReader bodyReader = new InputStreamReader(request.getInputStream());
+                    Query query = gson.fromJson(bodyReader, Query.class);
+                    System.out.println(gson.toJson(query));
+                    Playlist result = player.buildPlaylist(query);
+                    
+                    String json = gson.toJson(result);
+                    System.out.println(json);
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.getOutputStream().print(json);
                 }
                 break;
             }

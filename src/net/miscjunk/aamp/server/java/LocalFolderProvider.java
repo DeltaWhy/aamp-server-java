@@ -28,6 +28,7 @@ public class LocalFolderProvider implements MusicProvider {
 		for(File songFile : thisDir.listFiles(new Mp3FileFilter())) {
 			System.out.println("Detected song: " + songFile.getName());
 			Song added = new Song("" + i, this);
+			added.setTitle(songFile.getName()); //TODO - read ID3 tags
 			playlist.addSong(added);
 			names.put(added.getId(), songFile.getName());
 			i++;
@@ -46,7 +47,11 @@ public class LocalFolderProvider implements MusicProvider {
 
 	@Override
 	public Playlist getSongs(SimpleQuery query) {
-		return new Playlist();
+	    Playlist p = new Playlist();
+	    for (Song s : playlist.getSongs()) {
+	        if (s.match(query)) p.addSong(s);
+	    }
+	    return p;
 	}
 
 	@Override
