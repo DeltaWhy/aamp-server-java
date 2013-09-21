@@ -8,8 +8,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.miscjunk.aamp.common.MusicQueue;
 import net.miscjunk.aamp.common.Player;
 import net.miscjunk.aamp.common.Playlist;
+import net.miscjunk.aamp.common.PlaylistDeserializer;
 import net.miscjunk.aamp.common.Query;
 import net.miscjunk.aamp.common.Song;
 import net.miscjunk.aamp.common.SongSerializer;
@@ -28,6 +30,7 @@ public class HttpPlayerHandler extends AbstractHandler {
         this.player = appHandler;
         GsonBuilder gb = new GsonBuilder();
         gb.registerTypeAdapter(Song.class, new SongSerializer());
+        gb.registerTypeAdapter(Playlist.class, new PlaylistDeserializer(this.player));
         gb.registerTypeAdapter(LocalFolderProvider.class, new LocalFolderProviderSerializer());
         gson = gb.create();
     }
@@ -121,6 +124,18 @@ public class HttpPlayerHandler extends AbstractHandler {
             break;
         case "PUT":
             System.out.println("PUT " + target);
+            switch (path[1]) {
+            case "queue":
+                if (path.length < 3 || path[2].equals("")) {
+                    InputStreamReader bodyReader = new InputStreamReader(request.getInputStream());
+                    MusicQueue queue = new MusicQueue(gson.fromJson(bodyReader, Playlist.class));
+                    
+                    player.setQueue(queue);
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.getOutputStream().print("Updated queue.");
+                }
+                break;
+            }
             break;
         case "DELETE":
             System.out.println("DELETE " + target);
