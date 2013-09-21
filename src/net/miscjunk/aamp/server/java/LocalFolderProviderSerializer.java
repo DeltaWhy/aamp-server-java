@@ -9,7 +9,7 @@ public class LocalFolderProviderSerializer implements
     public JsonElement serialize(LocalFolderProvider src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject el = new JsonObject();
         el.addProperty("id", src.getId());
-        el.addProperty("type", "LocalFolderProvider");
+        el.addProperty("type", src.getClass().getCanonicalName());
         el.addProperty("rootDir", src.rootDir);
         return el;
     }

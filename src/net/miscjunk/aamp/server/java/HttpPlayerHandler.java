@@ -8,6 +8,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.miscjunk.aamp.common.MusicProvider;
+import net.miscjunk.aamp.common.MusicProviderDeserializer;
 import net.miscjunk.aamp.common.MusicQueue;
 import net.miscjunk.aamp.common.Player;
 import net.miscjunk.aamp.common.Playlist;
@@ -31,7 +33,9 @@ public class HttpPlayerHandler extends AbstractHandler {
         GsonBuilder gb = new GsonBuilder();
         gb.registerTypeAdapter(Song.class, new SongSerializer());
         gb.registerTypeAdapter(Playlist.class, new PlaylistDeserializer(this.player));
+        gb.registerTypeAdapter(MusicProvider.class, new MusicProviderDeserializer());
         gb.registerTypeAdapter(LocalFolderProvider.class, new LocalFolderProviderSerializer());
+        gb.registerTypeAdapter(LocalFolderProvider.class, new LocalFolderProviderDeserializer());
         gson = gb.create();
     }
 
@@ -133,6 +137,22 @@ public class HttpPlayerHandler extends AbstractHandler {
                     }
                 }
                 break;
+            case "providers":
+                if (path.length < 3 || path[2].equals("")) {
+                    InputStreamReader bodyReader = new InputStreamReader(request.getInputStream());
+                    MusicProvider p = gson.fromJson(bodyReader, MusicProvider.class);
+                    if (p == null) {
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        response.getOutputStream().print("Couldn't instantiate provider.");
+                    } else if (player.addProvider(p)) {
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        response.getOutputStream().print("Added provider.");
+                    } else {
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        response.getOutputStream().print("Couldn't add provider.");
+                    }
+                }
+                break;
             }
             break;
         case "PUT":
@@ -166,6 +186,29 @@ public class HttpPlayerHandler extends AbstractHandler {
                         response.getOutputStream().print("Couldn't update playlist.");
                     }
                 }
+                break;
+            case "providers":
+                if (path.length >= 3 && (path.length < 4 || path[3].equals(""))) {
+                    String providerId = path[2];
+                    if (player.getProvider(providerId) == null) {
+                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                        response.getOutputStream().print("No such provider.");
+                        return;
+                    }
+                    InputStreamReader bodyReader = new InputStreamReader(request.getInputStream());
+                    MusicProvider p = gson.fromJson(bodyReader, MusicProvider.class);
+                    if (p == null) {
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        response.getOutputStream().print("Couldn't instantiate provider.");
+                    } else if (player.updateProvider(p)) {
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        response.getOutputStream().print("Updated provider.");
+                    } else {
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        response.getOutputStream().print("Couldn't update provider.");
+                    }
+                }
+                break;
             }
             break;
         case "DELETE":
@@ -181,6 +224,19 @@ public class HttpPlayerHandler extends AbstractHandler {
                         player.removePlaylist(playlistId);
                         response.setStatus(HttpServletResponse.SC_OK);
                         response.getOutputStream().print("Deleted playlist.");
+                    }
+                }
+                break;
+            case "providers":
+                if (path.length >= 3 && (path.length < 4 || path[3].equals(""))) {
+                    String providerId = path[2];
+                    if (player.getProvider(providerId) == null) {
+                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                        response.getOutputStream().print("No such provider.");
+                    } else {
+                        player.removeProvider(providerId);
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        response.getOutputStream().print("Deleted provider.");
                     }
                 }
                 break;
