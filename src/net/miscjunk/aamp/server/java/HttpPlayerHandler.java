@@ -46,7 +46,9 @@ public class HttpPlayerHandler extends AbstractHandler {
         		player.pause();
         	}else if("next".equals(action)) {
         		player.next();
-        	}else if(action.startsWith("volume=")) {
+        	}else if ("prev".equals(action)) {
+				player.prev();
+			}else if(action.startsWith("volume=")) {
         		player.setVolume(Double.parseDouble(action.replace("volume=", "")));
         	}else if(action.startsWith("seek=")) {
         		player.seek(Double.parseDouble(action.replace("seek=", "")));
