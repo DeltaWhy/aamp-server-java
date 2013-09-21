@@ -15,7 +15,9 @@ public class AAMPMain extends Application{
 	@Override
 	public void start(Stage unused) throws Exception {
 		player = new Player();
-		player.addProvider(new LocalFolderProvider("songs", true));
+		LocalFolderProvider provider = new LocalFolderProvider("songs", true);
+		player.addProvider(provider);
+		player.addPlaylist(provider.getAllSongs());
 		AppListener listener = new JavaHTTPServer(player);
 		listener.start();
 	}

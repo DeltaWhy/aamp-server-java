@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.miscjunk.aamp.common.Player;
 import net.miscjunk.aamp.common.Playlist;
 import net.miscjunk.aamp.common.Song;
+import net.miscjunk.aamp.common.SongSerializer;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -50,11 +51,18 @@ public class HttpPlayerHandler extends AbstractHandler {
             }
             response.getWriter().println("Running " + target);
         } else if (target.startsWith("/songs") && "get".equalsIgnoreCase(request.getMethod())) {
-           Playlist allSongs = player.getAllSongs();
-           String json = gson.toJson(allSongs.getSongs());
-           response.getOutputStream().print(json);
+            Playlist allSongs = player.getAllSongs();
+            String json = gson.toJson(allSongs.getSongs());
+            response.getOutputStream().print(json);
+        } else if ((target.equals("/playlists") || target.equals("/playlists/"))
+                && "get".equalsIgnoreCase(request.getMethod())) {
+            String json = gson.toJson(player.getPlaylists());
+            response.getOutputStream().print(json);
+        } else if ((target.equals("/queue") || target.equals("/queue/"))
+                && "get".equalsIgnoreCase(request.getMethod())) {
+            String json = gson.toJson(player.getQueue());
+            response.getOutputStream().print(json);
         }
-
     }
 
 
