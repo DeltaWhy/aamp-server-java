@@ -7,7 +7,7 @@ public class Mp3FileFilter implements FilenameFilter {
 
 	@Override
 	public boolean accept(File file, String name) {
-		return name.endsWith("mp3");
+		return name.toLowerCase().endsWith("mp3");
 	}
 
 }

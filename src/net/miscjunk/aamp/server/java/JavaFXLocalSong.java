@@ -1,5 +1,10 @@
 package net.miscjunk.aamp.server.java;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
@@ -11,8 +16,9 @@ public class JavaFXLocalSong implements PlayableSong {
 	private MediaPlayer player;
 	
 	public JavaFXLocalSong(String rootDirAbsolute, String filename) {
-		this.loc = "file://" + rootDirAbsolute + "/" + filename;
-		this.media = new Media(this.loc);
+		this.loc = new File(rootDirAbsolute + "/" + filename).toURI().toASCIIString();
+		
+		this.media = new Media(loc);
 		player = new MediaPlayer(media);
 	}
 	
@@ -56,6 +62,16 @@ public class JavaFXLocalSong implements PlayableSong {
 	@Override
 	public void stop() {
 		player.stop();
+	}
+
+	@Override
+	public Runnable getOnFinishedListener() {
+		return player.getOnEndOfMedia();
+	}
+
+	@Override
+	public void setOnFinishedListener(Runnable action) {
+		player.setOnEndOfMedia(action);
 	}
 
 }

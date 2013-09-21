@@ -30,6 +30,7 @@ public class LocalFolderProvider implements MusicProvider {
 			Song added = new Song("" + i, this);
 			playlist.addSong(added);
 			names.put(added.getId(), songFile.getName());
+			i++;
 		}
 	}
 	
