@@ -120,6 +120,19 @@ public class HttpPlayerHandler extends AbstractHandler {
                     response.getOutputStream().print(json);
                 }
                 break;
+            case "playlists":
+                if (path.length < 3 || path[2].equals("")) {
+                    InputStreamReader bodyReader = new InputStreamReader(request.getInputStream());
+                    Playlist p = gson.fromJson(bodyReader, Playlist.class);
+                    if (player.addPlaylist(p)) {
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        response.getOutputStream().print("Added playlist.");
+                    } else {
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        response.getOutputStream().print("Couldn't add playlist.");
+                    }
+                }
+                break;
             }
             break;
         case "PUT":
@@ -135,11 +148,43 @@ public class HttpPlayerHandler extends AbstractHandler {
                     response.getOutputStream().print("Updated queue.");
                 }
                 break;
+            case "playlists":
+                if (path.length >= 3 && (path.length < 4 || path[3].equals(""))) {
+                    String playlistId = path[2];
+                    if (player.getPlaylist(playlistId) == null) {
+                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                        response.getOutputStream().print("No such playlist.");
+                        return;
+                    }
+                    InputStreamReader bodyReader = new InputStreamReader(request.getInputStream());
+                    Playlist p = gson.fromJson(bodyReader, Playlist.class);
+                    if (player.updatePlaylist(p)) {
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        response.getOutputStream().print("Updated playlist.");
+                    } else {
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        response.getOutputStream().print("Couldn't update playlist.");
+                    }
+                }
             }
             break;
         case "DELETE":
             System.out.println("DELETE " + target);
-            break;
+            switch (path[1]) {
+            case "playlists":
+                if (path.length >= 3 && (path.length < 4 || path[3].equals(""))) {
+                    String playlistId = path[2];
+                    if (player.getPlaylist(playlistId) == null) {
+                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                        response.getOutputStream().print("No such playlist.");
+                    } else {
+                        player.removePlaylist(playlistId);
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        response.getOutputStream().print("Deleted playlist.");
+                    }
+                }
+                break;
+            }
         }
     }
 }
