@@ -1,13 +1,13 @@
 package net.miscjunk.aamp.server.java;
 
-import org.eclipse.jetty.server.Server;
-
 import net.miscjunk.aamp.common.AppListener;
-import net.miscjunk.aamp.common.PlayerHandler;
+import net.miscjunk.aamp.common.Player;
+
+import org.eclipse.jetty.server.Server;
 
 public class JavaHTTPServer extends AppListener {
 
-	public JavaHTTPServer(PlayerHandler handler) {
+	public JavaHTTPServer(Player handler) {
 		super(handler);
 	}
 
@@ -17,10 +17,6 @@ public class JavaHTTPServer extends AppListener {
 		server.setHandler(new HttpPlayerHandler(handler));
 		try {
 			server.start();
-			while( server.getAttributeNames().hasMoreElements()) {
-				String attr = (String) server.getAttributeNames().nextElement();
-				System.out.println(attr + " is " + server.getAttribute(attr));
-			}
 			System.out.println("Listening on " + 13531);
 		}catch (Exception e) {
 			e.printStackTrace();

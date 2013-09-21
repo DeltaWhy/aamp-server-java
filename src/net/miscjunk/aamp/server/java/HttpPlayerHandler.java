@@ -8,16 +8,16 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.miscjunk.aamp.common.PlayerHandler;
+import net.miscjunk.aamp.common.Player;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
 public class HttpPlayerHandler extends AbstractHandler {
-	private PlayerHandler appHandler;
+	private Player player;
 	
-	public HttpPlayerHandler(PlayerHandler appHandler) {
-		this.appHandler = appHandler;
+	public HttpPlayerHandler(Player appHandler) {
+		this.player = appHandler;
 	}
 	
 	@Override
@@ -29,7 +29,15 @@ public class HttpPlayerHandler extends AbstractHandler {
         	BufferedReader bodyReader = new BufferedReader(new InputStreamReader(request.getInputStream()));
         	String action = bodyReader.readLine();
         	bodyReader.close();
-        	appHandler.onControlEvent(action);
+        	if("play".equals(action)) {
+        		player.play();
+        	}else if("pause".equals(action)) {
+        		player.pause();
+        	}else if(action.startsWith("volume=")) {
+        		player.setVolume(Double.parseDouble(action.replace("volume=", "")));
+        	}else if(action.startsWith("seek=")) {
+        		player.seek(Double.parseDouble(action.replace("seek=", "")));
+    		}
         	response.getWriter().println("Running " + target);
         }
         
