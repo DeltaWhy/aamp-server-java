@@ -33,43 +33,75 @@ public class HttpPlayerHandler extends AbstractHandler {
 
     @Override
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        response.setStatus(HttpServletResponse.SC_OK);
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         baseRequest.setHandled(true);
-        System.out.println("Got target " + target);
-        if(target.startsWith("/control") && "post".equalsIgnoreCase(request.getMethod()) ) {
-            BufferedReader bodyReader = new BufferedReader(new InputStreamReader(request.getInputStream()));
-            String action = bodyReader.readLine();
-            bodyReader.close();
-            System.out.println("With action " + action);
-            if("play".equals(action)) {
-
-                player.play();
-            } else if("pause".equals(action)) {
-                player.pause();
-            } else if(action.startsWith("volume=")) {
-                player.setVolume(Double.parseDouble(action.replace("volume=", "")));
-            } else if(action.startsWith("seek=")) {
-                player.seek(Double.parseDouble(action.replace("seek=", "")));
+        String[] path = target.split("/");
+        switch (request.getMethod()) {
+        case "GET":
+            System.out.println("GET " + target);
+            switch (path[1]) {
+            case "songs":
+                if (path.length < 3 || path[2].equals("")) {
+                    Playlist allSongs = player.getAllSongs();
+                    String json = gson.toJson(allSongs.getSongs());
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.getOutputStream().print(json);
+                }
+                break;
+            case "playlists":
+                if (path.length < 3 || path[2].equals("")) {
+                    String json = gson.toJson(player.getPlaylists());
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.getOutputStream().print(json);
+                }
+                break;
+            case "queue":
+                if (path.length < 3 || path[2].equals("")) {
+                    String json = gson.toJson(player.getQueue());
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.getOutputStream().print(json);
+                }
+                break;
+            case "providers":
+                if (path.length < 3 || path[2].equals("")) {
+                    String json = gson.toJson(player.getProviders());
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.getOutputStream().print(json);
+                }
+                break;
             }
-            response.getWriter().println("Running " + target);
-        } else if (target.startsWith("/songs") && "get".equalsIgnoreCase(request.getMethod())) {
-            Playlist allSongs = player.getAllSongs();
-            String json = gson.toJson(allSongs.getSongs());
-            response.getOutputStream().print(json);
-        } else if ((target.equals("/playlists") || target.equals("/playlists/"))
-                && "get".equalsIgnoreCase(request.getMethod())) {
-            String json = gson.toJson(player.getPlaylists());
-            response.getOutputStream().print(json);
-        } else if ((target.equals("/queue") || target.equals("/queue/"))
-                && "get".equalsIgnoreCase(request.getMethod())) {
-            String json = gson.toJson(player.getQueue());
-            response.getOutputStream().print(json);
-        } else if ((target.equals("/providers") || target.equals("/providers/"))
-                && "get".equalsIgnoreCase(request.getMethod())) {
-            String json = gson.toJson(player.getProviders());
-            response.getOutputStream().print(json);
+            break;
+        case "POST":
+            System.out.println("POST " + target);
+            switch (path[1]) {
+            case "control":
+                if (path.length < 3 || path[2].equals("")) {
+                    BufferedReader bodyReader = new BufferedReader(new InputStreamReader(request.getInputStream()));
+                    String action = bodyReader.readLine();
+                    bodyReader.close();
+                    System.out.println("With action " + action);
+                    if("play".equals(action)) {
+        
+                        player.play();
+                    } else if("pause".equals(action)) {
+                        player.pause();
+                    } else if(action.startsWith("volume=")) {
+                        player.setVolume(Double.parseDouble(action.replace("volume=", "")));
+                    } else if(action.startsWith("seek=")) {
+                        player.seek(Double.parseDouble(action.replace("seek=", "")));
+                    }
+                    response.getWriter().println("Running " + target);
+                    response.setStatus(HttpServletResponse.SC_OK);
+                }
+                break;
+            }
+            break;
+        case "PUT":
+            System.out.println("PUT " + target);
+            break;
+        case "DELETE":
+            System.out.println("DELETE " + target);
+            break;
         }
     }
-
-
 }
