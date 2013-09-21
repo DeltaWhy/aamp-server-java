@@ -6,7 +6,8 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class AAMPMain extends Application{
-	PlayerHandler handler;
+	private PlayerHandler handler;
+	
 	public static void main(String[] args) throws Exception {
 		Application.launch();
 	}
@@ -14,7 +15,7 @@ public class AAMPMain extends Application{
 	@Override
 	public void start(Stage unused) throws Exception {
 		handler = new JavaPlayerHandler();
-		AppListener listener = new JavaTestAppListener(handler);
+		AppListener listener = new JavaHTTPServer(handler);
 		listener.start();
 	}
 }

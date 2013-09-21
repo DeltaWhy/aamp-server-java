@@ -37,7 +37,12 @@ public class JavaFXLocalFilePlayStrategy implements PlayStrategy {
 
 	@Override
 	public void seek(double time) {
-		player.seek(new Duration(10));
+		player.seek(Duration.seconds(time));
+	}
+
+	@Override
+	public void setVolume(double volume) {
+		player.setVolume(volume);
 	}
 
 }

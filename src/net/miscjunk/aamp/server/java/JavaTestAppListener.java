@@ -12,9 +12,13 @@ public class JavaTestAppListener extends AppListener {
 	@Override
 	public void start() {
 		handler.onControlEvent("play");
-		try {Thread.sleep(500);}catch(Exception e) {}
-		handler.onControlEvent("pause");
-		
+		System.out.println("Playing..");
+		try {Thread.sleep(5000);}catch(Exception e) {}
+		System.out.println("Pausing..");
+		handler.onControlEvent("pause");	
+		try {Thread.sleep(3000);}catch(Exception e) {}
+		System.out.println("Playing..");
+		handler.onControlEvent("play");
 	}
 
 }

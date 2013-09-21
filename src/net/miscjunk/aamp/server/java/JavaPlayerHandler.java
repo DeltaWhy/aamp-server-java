@@ -20,6 +20,12 @@ public class JavaPlayerHandler implements PlayerHandler{
 		if("pause".equalsIgnoreCase(event)) {
 			queue.pause();
 		}
+		if(event.startsWith("volume=")) {
+			queue.setVolume(Double.parseDouble(event.replace("volume=", "")));
+		}
+		if(event.startsWith("seek=")) {
+			queue.seek(Double.parseDouble(event.replace("seek=", "")));
+		}
 		
 	}
 	
