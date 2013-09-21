@@ -80,17 +80,26 @@ public class HttpPlayerHandler extends AbstractHandler {
                     String action = bodyReader.readLine();
                     bodyReader.close();
                     System.out.println("With action " + action);
+                    boolean success = false;
                     if("play".equals(action)) {
-        
-                        player.play();
+                    	success = player.play();
                     } else if("pause".equals(action)) {
-                        player.pause();
+                    	success = player.pause();
                     } else if(action.startsWith("volume=")) {
-                        player.setVolume(Double.parseDouble(action.replace("volume=", "")));
+                    	success = player.setVolume(Double.parseDouble(action.replace("volume=", "")));
                     } else if(action.startsWith("seek=")) {
-                        player.seek(Double.parseDouble(action.replace("seek=", "")));
-                    }
-                    response.getWriter().println("Running " + target);
+                    	success = player.seek(Double.parseDouble(action.replace("seek=", "")));
+                    }else if("next".equals(action)) {
+                    	success = player.next();
+                	}else if ("prev".equals(action)) {
+                		success = player.prev();
+        			}else if(action.startsWith("skipTo=")) {
+        				String id = action.replace("skipTo=", "");
+        				success = player.skipTo(id);
+        			}
+                    if(success) {
+                    	response.getWriter().println("SET:" + action);
+                    }else {response.getWriter().println("FAILED: SET:" + action);}
                     response.setStatus(HttpServletResponse.SC_OK);
                 }
                 break;
