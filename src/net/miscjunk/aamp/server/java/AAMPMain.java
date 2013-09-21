@@ -14,7 +14,7 @@ public class AAMPMain extends Application{
 	@Override
 	public void start(Stage unused) throws Exception {
 		handler = new JavaPlayerHandler();
-		AppListener listener = new AppListener(handler);
+		AppListener listener = new JavaTestAppListener(handler);
 		listener.start();
 	}
 }

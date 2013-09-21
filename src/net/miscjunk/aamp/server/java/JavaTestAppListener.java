@@ -11,6 +11,9 @@ public class JavaTestAppListener extends AppListener {
 
 	@Override
 	public void start() {
+		handler.onControlEvent("play");
+		try {Thread.sleep(500);}catch(Exception e) {}
+		handler.onControlEvent("pause");
 		
 	}
 
