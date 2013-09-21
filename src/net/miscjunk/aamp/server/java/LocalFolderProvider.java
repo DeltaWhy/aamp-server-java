@@ -11,7 +11,7 @@ import net.miscjunk.aamp.common.SimpleQuery;
 import net.miscjunk.aamp.common.Song;
 
 public class LocalFolderProvider implements MusicProvider {
-	private String rootDir;
+	String rootDir;
 	private Playlist playlist;
 	private Map<String, String> names;
 	

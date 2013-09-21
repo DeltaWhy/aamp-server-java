@@ -27,6 +27,7 @@ public class HttpPlayerHandler extends AbstractHandler {
         this.player = appHandler;
         GsonBuilder gb = new GsonBuilder();
         gb.registerTypeAdapter(Song.class, new SongSerializer());
+        gb.registerTypeAdapter(LocalFolderProvider.class, new LocalFolderProviderSerializer());
         gson = gb.create();
     }
 
@@ -41,6 +42,7 @@ public class HttpPlayerHandler extends AbstractHandler {
             bodyReader.close();
             System.out.println("With action " + action);
             if("play".equals(action)) {
+
                 player.play();
             } else if("pause".equals(action)) {
                 player.pause();
@@ -61,6 +63,10 @@ public class HttpPlayerHandler extends AbstractHandler {
         } else if ((target.equals("/queue") || target.equals("/queue/"))
                 && "get".equalsIgnoreCase(request.getMethod())) {
             String json = gson.toJson(player.getQueue());
+            response.getOutputStream().print(json);
+        } else if ((target.equals("/providers") || target.equals("/providers/"))
+                && "get".equalsIgnoreCase(request.getMethod())) {
+            String json = gson.toJson(player.getProviders());
             response.getOutputStream().print(json);
         }
     }
