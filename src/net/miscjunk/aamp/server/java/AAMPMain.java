@@ -7,6 +7,7 @@ import net.miscjunk.aamp.common.Player;
 
 public class AAMPMain extends Application{
 	private Player player;
+	private Broadcaster broadcaster;
 	
 	public static void main(String[] args) throws Exception {
 		Application.launch();
@@ -20,5 +21,12 @@ public class AAMPMain extends Application{
 		player.addPlaylist(provider.getAllSongs());
 		AppListener listener = new JavaHTTPServer(player);
 		listener.start();
+		broadcaster = new Broadcaster();
+		broadcaster.start();
+	}
+	
+	@Override
+	public void stop() throws Exception {
+	    broadcaster.stop();
 	}
 }
