@@ -5,8 +5,3 @@
 bin/
 gen/
 local.properties
-.classpath
-.project
-*.iws
-.idea/workspace.xml
-.idea/tasks.xml

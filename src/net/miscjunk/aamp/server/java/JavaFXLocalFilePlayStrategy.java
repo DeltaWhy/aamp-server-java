@@ -4,6 +4,7 @@ import net.miscjunk.aamp.common.PlayStrategy;
 import net.miscjunk.aamp.common.Song;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
 
 public class JavaFXLocalFilePlayStrategy implements PlayStrategy {
 	private String loc;
@@ -35,9 +36,8 @@ public class JavaFXLocalFilePlayStrategy implements PlayStrategy {
 	}
 
 	@Override
-	public void seek(int time) {
-		// TODO Auto-generated method stub
-
+	public void seek(double time) {
+		player.seek(new Duration(10));
 	}
 
 }

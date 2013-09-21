@@ -13,11 +13,16 @@ public class JavaPlayerHandler implements PlayerHandler{
 	}
 	
 	@Override
-	public void onEvent(String event) {
+	public void onControlEvent(String event) {
 		if("play".equalsIgnoreCase(event)) {
 			queue.play();
 		}
+		if("pause".equalsIgnoreCase(event)) {
+			queue.pause();
+		}
 		
 	}
+	
+	
 
 }
