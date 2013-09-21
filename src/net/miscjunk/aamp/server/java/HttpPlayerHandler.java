@@ -29,6 +29,7 @@ public class HttpPlayerHandler extends AbstractHandler {
         	BufferedReader bodyReader = new BufferedReader(new InputStreamReader(request.getInputStream()));
         	String action = bodyReader.readLine();
         	bodyReader.close();
+        	System.out.println("With action " + action);
         	if("play".equals(action)) {
         		player.play();
         	}else if("pause".equals(action)) {

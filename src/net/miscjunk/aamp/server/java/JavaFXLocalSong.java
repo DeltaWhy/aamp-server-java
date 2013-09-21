@@ -53,4 +53,9 @@ public class JavaFXLocalSong implements PlayableSong {
 		player.setVolume(volume);
 	}
 
+	@Override
+	public void stop() {
+		player.stop();
+	}
+
 }

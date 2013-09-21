@@ -13,20 +13,23 @@ import net.miscjunk.aamp.common.Song;
 public class LocalFolderProvider implements MusicProvider {
 	private String rootDir;
 	private Playlist playlist;
-	private Map<Integer, String> names;
+	private Map<String, String> names;
 	
 	public LocalFolderProvider(String basedir, boolean relative) {
 		if(relative) {
-			this.rootDir = System.getProperty("user.dir") + relative;
+			this.rootDir = System.getProperty("user.dir") + "/" + basedir;
+		}else {
+			this.rootDir = basedir;
 		}
-		this.rootDir = basedir;
 		playlist = new Playlist();
 		File thisDir = new File(basedir);
-		names = new HashMap<Integer, String>();
+		names = new HashMap<String, String>();
 		int i = 0;
 		for(File songFile : thisDir.listFiles(new Mp3FileFilter())) {
-			playlist.addSong(new Song("" + i, this));
-			names.put(i, songFile.getName());
+			System.out.println("Detected song: " + songFile.getName());
+			Song added = new Song("" + i, this);
+			playlist.addSong(added);
+			names.put(added.getId(), songFile.getName());
 		}
 	}
 	
